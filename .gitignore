@@ -1,0 +1,6 @@
+.DS_Store
+log
+test/configurations.yml
+.byebug_history
+Gemfile.lock
+gemfiles/*lock

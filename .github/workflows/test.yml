@@ -1,0 +1,53 @@
+name: Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 0 * * 0'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ['2.7', '3.1', '3.2']
+        activerecord: ['6_1', '7_0', '7_1', 'main']
+        exclude:
+          - ruby-version: '2.7'
+            activerecord: 'main'
+          - ruby-version: '2.7'
+            activerecord: '7_1'
+          - ruby-version: '2.7'
+            activerecord: '7_0'
+        #   - ruby-version: '3.1'
+        #     activerecord: '7_0'
+        #   - ruby-version: '3.1'
+        #     activerecord: '7_1'
+        #   - ruby-version: '3.2'
+        #     activerecord: '6_1'
+        #   - ruby-version: '3.2'
+        #     activerecord: '7_0'
+        #   - ruby-version: '3.2'
+        #     activerecord: '7_1'
+    env:
+      UPLOADCARE_PUBLIC_KEY: ${{ secrets.UPLOADCARE_PUBLIC_KEY }}
+      UPLOADCARE_SECRET_KEY: ${{ secrets.UPLOADCARE_SECRET_KEY }}
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/rails_${{ matrix.activerecord }}.gemfile
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    - name: setup config
+      run: cp test/configurations.example.yml test/configurations.yml
+    - name: Run tests
+      run: bin/test

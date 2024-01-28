@@ -1,0 +1,5 @@
+uploadcare:
+  service: Uploadcare
+  public_key: <%= ENV['UPLOADCARE_PUBLIC_KEY'] %>
+  secret_key: <%= ENV['UPLOADCARE_SECRET_KEY'] %>
+  public: true
