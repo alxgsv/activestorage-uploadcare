@@ -26,16 +26,6 @@ jobs:
             activerecord: '7_1'
           - ruby-version: '2.7'
             activerecord: '7_0'
-        #   - ruby-version: '3.1'
-        #     activerecord: '7_0'
-        #   - ruby-version: '3.1'
-        #     activerecord: '7_1'
-        #   - ruby-version: '3.2'
-        #     activerecord: '6_1'
-        #   - ruby-version: '3.2'
-        #     activerecord: '7_0'
-        #   - ruby-version: '3.2'
-        #     activerecord: '7_1'
     env:
       UPLOADCARE_PUBLIC_KEY: ${{ secrets.UPLOADCARE_PUBLIC_KEY }}
       UPLOADCARE_SECRET_KEY: ${{ secrets.UPLOADCARE_SECRET_KEY }}
@@ -51,3 +41,23 @@ jobs:
       run: cp test/configurations.example.yml test/configurations.yml
     - name: Run tests
       run: bin/test
+
+  style-check:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        ruby-version:
+          - 2.7
+          - 3.2
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    - name: Install Rubocop
+      run: gem install rubocop
+    - name: Check codestyle
+      run: rubocop
